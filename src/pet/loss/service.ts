@@ -1,10 +1,8 @@
 "use strict";
 
 import * as error from "../../server/error";
-import { ILoss, Loss } from "./schema";
+import { ILoss, ILossFull, Loss } from "./schema";
 import * as servicePet from "../service";
-import { MongoStore } from "connect-mongo";
-
 
 const mongoose = require("mongoose");
 
@@ -44,6 +42,53 @@ export async function create(userId: string, petId: string, body: ILoss): Promis
     return Promise.reject(err);
   }
 }
+
+
+export async function findByPet(petId: string): Promise<Array<ILoss>> {
+  try {
+    const result = await Loss.find({
+      pet: mongoose.Types.ObjectId(petId),
+    }).exec();
+
+    return Promise.resolve(result);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+export async function findById(petId:string, lossId: string): Promise<ILossFull> {
+  try {
+    const loss = await Loss.findOne({
+      _id: lossId,
+      pet: mongoose.Types.ObjectId(petId),
+    }).exec();
+    if (!loss) {
+      throw error.newError(error.ERROR_NOT_FOUND, "El loss no se encuentra");  
+    }
+
+    const pet = await servicePet.find(petId)
+
+    const lossfull: ILossFull = {
+      description: loss.description,
+      date: loss.date,
+      picture: loss.picture,
+      phone: loss.phone,
+      state: loss.state,
+      pet: {
+        name: pet.name,
+        birthDate: pet.birthDate,
+        description: pet.description
+      },
+    }
+
+    return Promise.resolve(lossfull);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+
+
 
 
 async function validateUpdate(body: ILoss): Promise<ILoss> {
@@ -89,7 +134,7 @@ async function isPetLost(petId: string): Promise<void> {
 
     return Promise.reject(result);
   } catch {
-   return
+    return
   }
 }
 

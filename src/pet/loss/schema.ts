@@ -14,6 +14,25 @@ export interface ILoss extends mongoose.Document {
     enabled: Boolean;
 }
 
+export interface ILossFull{
+    description: string;
+    date: Date;
+    picture: string;
+    phone: string;
+    state: string;
+    pet: {
+        name: string;
+        birthDate: Date;
+        description: string;
+    },
+    updated: Number;
+    created: Number;
+    enabled: Boolean;
+}
+
+
+
+
 /**
  * Esquema de Mascotas
  */
@@ -40,7 +59,7 @@ export let LossSchema = new mongoose.Schema({
     },
     state: {
         type: String,
-        enum : ["LOST","FIND"],
+        enum: ["LOST", "FIND"],
         default: "LOST",
         trim: true
     },

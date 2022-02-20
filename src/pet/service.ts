@@ -32,6 +32,20 @@ export async function findById(userId: string, petId: string): Promise<IPet> {
   }
 }
 
+export async function find(petId: string): Promise<IPet> {
+  try {
+    const result = await Pet.findOne({
+      _id: petId,
+    }).exec();
+
+    return Promise.resolve(result);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+
+
 async function validateUpdate(body: IPet): Promise<IPet> {
   const result: error.ValidationErrorMessage = {
     messages: []

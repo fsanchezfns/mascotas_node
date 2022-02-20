@@ -22,11 +22,6 @@ export function initModule(app: express.Express) {
     .get(onlyLoggedIn, readById)
     .post(onlyLoggedIn, updateById)
     .delete(onlyLoggedIn, removeById);
-
-//loss
-  app
-    .route("/v1/pet/:petId/loss")  
-    .post(onlyLoggedIn, loss.create);
 }
 
 
