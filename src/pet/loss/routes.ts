@@ -16,8 +16,17 @@ export function initModule(app: express.Express) {
     
     app
     .route("/v1/pet/:petId/loss/:lossId")  
-    .get(onlyLoggedIn, findById);
+    .get(onlyLoggedIn, findByPetAndId)
+    .put(onlyLoggedIn, update);
 
+
+    app
+    .route("/v1/loss")  
+    .get(onlyLoggedIn, findAll);
+
+    app
+    .route("/v1/loss/:lossId")  
+    .get(onlyLoggedIn, findById);
 }
 
 
@@ -42,9 +51,7 @@ export function initModule(app: express.Express) {
  **/
 async function create(req: ISessionRequest, res: express.Response) {
     const result = await service.create(req.user.user_id, req.params.petId, req.body);
-    res.json({
-      id: result.id
-    });
+    res.json(result)
   }
 
 async function findByPet(req: ISessionRequest, res: express.Response) {
@@ -59,7 +66,29 @@ async function findByPet(req: ISessionRequest, res: express.Response) {
     }));
   } 
 
+  async function findByPetAndId(req: ISessionRequest, res: express.Response) {
+    const result = await service.findByPetAndId(req.params.petId,req.params.lossId);
+    res.json(result)
+  }
+
+  async function update(req: ISessionRequest, res: express.Response) {
+    const result = await service.update(req.user.user_id,req.params.petId,req.params.lossId,req.body);
+    res.json(result)
+  }
+
+  async function findAll(req: ISessionRequest, res: express.Response) {
+    const result = await service.findAll();
+    res.json(result.map(dto => {
+      return {
+        id: dto.id,
+        description: dto.description,
+        date: dto.date,
+        state: dto.state
+      };
+    }));
+  }
+
   async function findById(req: ISessionRequest, res: express.Response) {
-    const result = await service.findById(req.params.petId,req.params.lossId);
+    const result = await service.findById(req.params.lossId);
     res.json(result)
   }

@@ -1,15 +1,37 @@
 "use strict";
 
 import * as error from "../../server/error";
-import { ILoss, ILossFull, Loss } from "./schema";
+import { ILoss, Loss } from "./schema";
 import * as servicePet from "../service";
+import { IPet } from "../schema";
 
 const mongoose = require("mongoose");
 
+interface ILossBasic{
+  id: string;
+  description: string;
+  date: Date;
+  picture: string;
+  phone: string;
+  state: string;
+}
 
-export async function create(userId: string, petId: string, body: ILoss): Promise<ILoss> {
+interface ILossFull{
+  id: string;
+  description: string;
+  date: Date;
+  picture: string;
+  phone: string;
+  state: string;
+  pet: {
+      name: string;
+      birthDate: Date;
+      description: string;
+  }
+}
+
+export async function create(userId: string, petId: string, body: ILoss): Promise<ILossBasic> {
   try {
-    console.log(userId)
     //pet del user
     await validatePet(userId, petId)
 
@@ -37,7 +59,8 @@ export async function create(userId: string, petId: string, body: ILoss): Promis
     }
 
     await loss.save();
-    return Promise.resolve(loss);
+    const lossBasic = formatILossBasic(loss)
+    return Promise.resolve(lossBasic);
   } catch (err) {
     return Promise.reject(err);
   }
@@ -56,30 +79,18 @@ export async function findByPet(petId: string): Promise<Array<ILoss>> {
   }
 }
 
-export async function findById(petId:string, lossId: string): Promise<ILossFull> {
+export async function findByPetAndId(petId:string, lossId: string): Promise<ILossFull> {
   try {
     const loss = await Loss.findOne({
       _id: lossId,
       pet: mongoose.Types.ObjectId(petId),
     }).exec();
     if (!loss) {
-      throw error.newError(error.ERROR_NOT_FOUND, "El loss no se encuentra");  
+      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");  
     }
 
     const pet = await servicePet.find(petId)
-
-    const lossfull: ILossFull = {
-      description: loss.description,
-      date: loss.date,
-      picture: loss.picture,
-      phone: loss.phone,
-      state: loss.state,
-      pet: {
-        name: pet.name,
-        birthDate: pet.birthDate,
-        description: pet.description
-      },
-    }
+    const lossfull = formatILossFull(loss,pet)
 
     return Promise.resolve(lossfull);
   } catch (err) {
@@ -87,7 +98,74 @@ export async function findById(petId:string, lossId: string): Promise<ILossFull>
   }
 }
 
+export async function update(userId: string, petId: string, lossId: string, body: ILoss): Promise<ILossBasic>{
+  try {
+    //pet del user
+    await validatePet(userId, petId)
 
+    const loss = await Loss.findOne({
+      _id: lossId,
+      pet: mongoose.Types.ObjectId(petId),
+    }).exec();
+    if (!loss) {
+      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");  
+    }
+
+    if (loss.state == 'FIND'){
+      throw error.newError(error.ERROR_NOT_FOUND, "La mascota ya fue encontrada");
+    }
+
+
+    const validBody = await validateUpdate(body);
+    if (validBody.description) {
+      loss.description = validBody.description;
+    }
+    if (validBody.date) {
+      loss.date = validBody.date;
+    }
+    if (validBody.picture) {
+      loss.picture = validBody.picture;
+    }
+    if (validBody.phone) {
+      loss.phone = validBody.phone;
+    }
+    if (validBody.state) {
+      loss.state = validBody.state;
+    }
+    await loss.save();
+
+    const lossBasic = formatILossBasic(loss)
+    return Promise.resolve(lossBasic);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+
+
+export async function findAll(): Promise<Array<ILoss>> {
+  try {
+    const result = await Loss.find({}).exec();
+    return Promise.resolve(result);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+export async function findById(lossId: string): Promise<ILossFull> {
+  try {
+    const loss = await Loss.findOne({
+      _id: lossId,
+    }).exec();
+    const petId = String(loss.pet)
+    const pet = await servicePet.find(petId)
+
+    const lossfull = formatILossFull(loss,pet)  
+    return Promise.resolve(lossfull);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
 
 
 
@@ -144,9 +222,43 @@ async function findByPedIdAndState(petId: string, state: string): Promise<ILoss>
       pet: mongoose.Types.ObjectId(petId),
       state: state
     }).exec();
-    console.log('estoy en pet find by');
+
     return Promise.resolve(result);
   } catch (err) {
     return Promise.reject(err);
   }
+}
+
+
+
+
+async function formatILossBasic(loss: ILoss): Promise<ILossBasic> {
+  const lossBasic: ILossBasic ={
+      id: loss.id,
+      description: loss.description,
+      date: loss.date,
+      picture: loss.picture,
+      phone: loss.phone,
+      state: loss.state,
+    }
+
+    return lossBasic;
+}
+
+async function formatILossFull(loss: ILoss, pet: IPet): Promise<ILossFull> {
+  const lossfull: ILossFull ={
+      id: loss.id,
+      description: loss.description,
+      date: loss.date,
+      picture: loss.picture,
+      phone: loss.phone,
+      state: loss.state,
+      pet: {
+        name: pet.name,
+        birthDate: pet.birthDate,
+        description: pet.description
+      },
+    }
+
+    return lossfull;
 }
