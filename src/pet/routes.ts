@@ -5,6 +5,7 @@ import * as error from "../server/error";
 import { onlyLoggedIn } from "../token/passport";
 import { ISessionRequest } from "../user/service";
 import * as service from "./service";
+import * as loss from "./loss/routes";
 
 /**
  * Modulo de mascotas de usuario
@@ -21,6 +22,11 @@ export function initModule(app: express.Express) {
     .get(onlyLoggedIn, readById)
     .post(onlyLoggedIn, updateById)
     .delete(onlyLoggedIn, removeById);
+
+//loss
+  app
+    .route("/v1/pet/:petId/loss")  
+    .post(onlyLoggedIn, loss.create);
 }
 
 

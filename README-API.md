@@ -7,6 +7,9 @@ Microservicio de Autentificación
 	- [Guardar Imagen](#guardar-imagen)
 	- [Obtener Imagen](#obtener-imagen)
 	
+- [Loss](#loss)
+	- [Crear loss](#crear-loss)
+	
 - [Mascotas](#mascotas)
 	- [Actualizar Mascota](#actualizar-mascota)
 	- [Buscar Mascota](#buscar-mascota)
@@ -130,6 +133,76 @@ Authorization=bearer {token}
 | Name     | Type       | Description                           |
 |:---------|:-----------|:--------------------------------------|
 |  Base64 | text | <p>image response</p>|
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+# <a name='loss'></a> Loss
+
+## <a name='crear-loss'></a> Crear loss
+[Back to top](#top)
+
+<p>Crea un aviso de perdida.</p>
+
+	POST /v1/pet/:petId/loss
+
+
+
+### Examples
+
+Mascota
+
+```
+{
+  "id": "Id mascota"
+}
+```
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Mascota
+
+```
+{
+  "id": "Id de mascota",
+  "name": "Nombre de la mascota",
+  "description": "Descripción de la mascota",
+  "birthDate": date (DD/MM/YYYY),
+}
+```
+
 
 ### Error Response
 

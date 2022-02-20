@@ -40,3 +40,4 @@ npm-debug.log*
 package-lock.json
 
 coverage
+readme-examples.md
