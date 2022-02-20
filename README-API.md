@@ -7,8 +7,13 @@ Microservicio de Autentificación
 	- [Guardar Imagen](#guardar-imagen)
 	- [Obtener Imagen](#obtener-imagen)
 	
-- [Loss](#loss)
-	- [Crear loss](#crear-loss)
+- [Mascota_Perdida](#mascota_perdida)
+	- [Actualizar un aviso de mascota perdida](#actualizar-un-aviso-de-mascota-perdida)
+	- [Crear avisos de mascota perdida](#crear-avisos-de-mascota-perdida)
+	- [Listar todos los avisos de todas las mascotas](#listar-todos-los-avisos-de-todas-las-mascotas)
+	- [Lista el detalle de un aviso](#lista-el-detalle-de-un-aviso)
+	- [Listar avisos de mascota](#listar-avisos-de-mascota)
+	- [Listar un aviso de mascota](#listar-un-aviso-de-mascota)
 	
 - [Mascotas](#mascotas)
 	- [Actualizar Mascota](#actualizar-mascota)
@@ -163,24 +168,28 @@ HTTP/1.1 500 Internal Server Error
    "error" : "Not Found"
 }
 ```
-# <a name='loss'></a> Loss
+# <a name='mascota_perdida'></a> Mascota_Perdida
 
-## <a name='crear-loss'></a> Crear loss
+## <a name='actualizar-un-aviso-de-mascota-perdida'></a> Actualizar un aviso de mascota perdida
 [Back to top](#top)
 
-<p>Crea un aviso de perdida.</p>
+<p>Actualizar un aviso de mascota perdida.</p>
 
-	POST /v1/pet/:petId/loss
+	PUT /v1/pet/:petId/loss/:lossId
 
 
 
 ### Examples
 
-Mascota
+Loss
 
 ```
 {
-  "id": "Id mascota"
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+  "state": "[LOST/FIND]"
 }
 ```
 Header Autorización
@@ -192,14 +201,351 @@ Authorization=bearer {token}
 
 ### Success Response
 
-Mascota
+Loss
 
 ```
 {
-  "id": "Id de mascota",
-  "name": "Nombre de la mascota",
-  "description": "Descripción de la mascota",
-  "birthDate": date (DD/MM/YYYY),
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+  "state": "[LOST/FIND]"
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='crear-avisos-de-mascota-perdida'></a> Crear avisos de mascota perdida
+[Back to top](#top)
+
+<p>Crea un aviso de mascota perdida.</p>
+
+	POST /v1/pet/:petId/loss
+
+
+
+### Examples
+
+Loss
+
+```
+{
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+}
+```
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Loss
+
+```
+{
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+  "state": "[LOST/FIND]"
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='listar-todos-los-avisos-de-todas-las-mascotas'></a> Listar todos los avisos de todas las mascotas
+[Back to top](#top)
+
+<p>Listar todos los avisos</p>
+
+	GET /v1/lossId
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Loss
+
+```
+{
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+  "state": "[LOST/FIND]"
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='lista-el-detalle-de-un-aviso'></a> Lista el detalle de un aviso
+[Back to top](#top)
+
+<p>Listar un aviso en detalle</p>
+
+	GET /v1/lossId/:id
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Loss
+
+```
+{
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+    "phone": "telefono de contacto",
+    "state": "[LOST/FIND]"
+    "pet":{
+      "name": "nombre de mascota ",
+      "birthDate":"date (DD/MM/YYYY)",
+      "description":"descripción de mascota"
+    }
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='listar-avisos-de-mascota'></a> Listar avisos de mascota
+[Back to top](#top)
+
+<p>Listar avisos de mascota.</p>
+
+	GET /v1/pet/:petId/loss
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Loss
+
+```
+{
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+  "phone": "telefono de contacto",
+  "state": "[LOST/FIND]"
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='listar-un-aviso-de-mascota'></a> Listar un aviso de mascota
+[Back to top](#top)
+
+<p>Listar un aviso de mascota.</p>
+
+	GET /v1/pet/:petId/loss/:lossId
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Loss
+
+```
+{
+  "id": "Id del aviso de perdida",
+  "description": "Descripción del aviso",
+  "date": "fecha de perdida (DD/MM/YYYY)",
+  "picture": "imagen mas reciente",
+    "phone": "telefono de contacto",
+    "state": "[LOST/FIND]"
+    "pet":{
+      "name": "nombre de mascota ",
+      "birthDate":"date (DD/MM/YYYY)",
+      "description":"descripción de mascota"
+    }
 }
 ```
 
