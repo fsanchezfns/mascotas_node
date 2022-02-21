@@ -322,7 +322,7 @@ HTTP/1.1 500 Internal Server Error
 
 <p>Listar todos los avisos</p>
 
-	GET /v1/lossId
+	GET /v1/loss
 
 
 

@@ -7,7 +7,7 @@ import { IPet } from "../schema";
 
 const mongoose = require("mongoose");
 
-interface ILossBasic{
+interface ILossBasic {
   id: string;
   description: string;
   date: Date;
@@ -16,7 +16,7 @@ interface ILossBasic{
   state: string;
 }
 
-interface ILossFull{
+interface ILossFull {
   id: string;
   description: string;
   date: Date;
@@ -24,9 +24,9 @@ interface ILossFull{
   phone: string;
   state: string;
   pet: {
-      name: string;
-      birthDate: Date;
-      description: string;
+    name: string;
+    birthDate: Date;
+    description: string;
   }
 }
 
@@ -79,18 +79,18 @@ export async function findByPet(petId: string): Promise<Array<ILoss>> {
   }
 }
 
-export async function findByPetAndId(petId:string, lossId: string): Promise<ILossFull> {
+export async function findByPetAndId(petId: string, lossId: string): Promise<ILossFull> {
   try {
     const loss = await Loss.findOne({
       _id: lossId,
       pet: mongoose.Types.ObjectId(petId),
     }).exec();
     if (!loss) {
-      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");  
+      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");
     }
 
     const pet = await servicePet.find(petId)
-    const lossfull = formatILossFull(loss,pet)
+    const lossfull = formatILossFull(loss, pet)
 
     return Promise.resolve(lossfull);
   } catch (err) {
@@ -98,7 +98,7 @@ export async function findByPetAndId(petId:string, lossId: string): Promise<ILos
   }
 }
 
-export async function update(userId: string, petId: string, lossId: string, body: ILoss): Promise<ILossBasic>{
+export async function update(userId: string, petId: string, lossId: string, body: ILoss): Promise<ILossBasic> {
   try {
     //pet del user
     await validatePet(userId, petId)
@@ -108,10 +108,10 @@ export async function update(userId: string, petId: string, lossId: string, body
       pet: mongoose.Types.ObjectId(petId),
     }).exec();
     if (!loss) {
-      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");  
+      throw error.newError(error.ERROR_NOT_FOUND, "El aviso no se encuentra");
     }
 
-    if (loss.state == 'FIND'){
+    if (loss.state == 'FIND') {
       throw error.newError(error.ERROR_NOT_FOUND, "La mascota ya fue encontrada");
     }
 
@@ -160,7 +160,7 @@ export async function findById(lossId: string): Promise<ILossFull> {
     const petId = String(loss.pet)
     const pet = await servicePet.find(petId)
 
-    const lossfull = formatILossFull(loss,pet)  
+    const lossfull = formatILossFull(loss, pet)
     return Promise.resolve(lossfull);
   } catch (err) {
     return Promise.reject(err);
@@ -208,11 +208,16 @@ async function isPetLost(petId: string): Promise<void> {
 
   try {
     const res = await findByPedIdAndState(petId, 'LOST')
-    result.messages.push({ path: "pet is lost", message: `La mascota ya tiene un aviso de perdida con el id ${res.id}` });
 
-    return Promise.reject(result);
-  } catch {
-    return
+    //si encuentra una en estado LOST no puede crear
+    if (res) {
+      result.messages.push({ path: "description", message: "La mascota ya tiene un aviso de pérdida" });
+      return Promise.reject(result)
+    } 
+
+    return;
+  } catch(err) {
+    return Promise.reject(err);
   }
 }
 
@@ -225,6 +230,7 @@ async function findByPedIdAndState(petId: string, state: string): Promise<ILoss>
 
     return Promise.resolve(result);
   } catch (err) {
+
     return Promise.reject(err);
   }
 }
@@ -233,32 +239,32 @@ async function findByPedIdAndState(petId: string, state: string): Promise<ILoss>
 
 
 async function formatILossBasic(loss: ILoss): Promise<ILossBasic> {
-  const lossBasic: ILossBasic ={
-      id: loss.id,
-      description: loss.description,
-      date: loss.date,
-      picture: loss.picture,
-      phone: loss.phone,
-      state: loss.state,
-    }
+  const lossBasic: ILossBasic = {
+    id: loss.id,
+    description: loss.description,
+    date: loss.date,
+    picture: loss.picture,
+    phone: loss.phone,
+    state: loss.state,
+  }
 
-    return lossBasic;
+  return lossBasic;
 }
 
 async function formatILossFull(loss: ILoss, pet: IPet): Promise<ILossFull> {
-  const lossfull: ILossFull ={
-      id: loss.id,
-      description: loss.description,
-      date: loss.date,
-      picture: loss.picture,
-      phone: loss.phone,
-      state: loss.state,
-      pet: {
-        name: pet.name,
-        birthDate: pet.birthDate,
-        description: pet.description
-      },
-    }
+  const lossfull: ILossFull = {
+    id: loss.id,
+    description: loss.description,
+    date: loss.date,
+    picture: loss.picture,
+    phone: loss.phone,
+    state: loss.state,
+    pet: {
+      name: pet.name,
+      birthDate: pet.birthDate,
+      description: pet.description
+    },
+  }
 
-    return lossfull;
+  return lossfull;
 }

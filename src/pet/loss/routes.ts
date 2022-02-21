@@ -184,7 +184,7 @@ async function findByPet(req: ISessionRequest, res: express.Response) {
 
 
   /**
- * @api {get} /v1/lossId  Listar todos los avisos de todas las mascotas
+ * @api {get} /v1/loss  Listar todos los avisos de todas las mascotas
  * @apiName Listar Aviso
  * @apiGroup Mascota Perdida
  *
